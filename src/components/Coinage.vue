@@ -2,7 +2,7 @@
 	<div>
 		<h1>Creepy Crypto Coins</h1>
 		<div>
-			<h4>New Arrivals between {{ previousTimeFormatted }} and {{ newTimeFormatted }}</h4>
+			<h4>New Arrivals between {{ viewLoadedAt }} and {{ newTimeFormatted }}</h4>
 			<ul
 				v-for="newCoin in newArrivals"
 				:key="newCoin.id">
@@ -24,9 +24,9 @@
         newCoinsList: [],
         newTimestamp: new moment(),
         previousCoinsMap: {},
-        previousTimestamp: new moment(),
         newArrivals: [],
-        keepPolling: true
+        keepPolling: true,
+        viewLoadedAt: new moment().format('hh:mm:ss, D-MMM-yyyy')
       }
     },
 		async mounted () {
@@ -42,10 +42,7 @@
 		},
 		computed: {
 			newTimeFormatted() {
-				return this.newTimestamp.format('hh:mm:ss');
-			},
-			previousTimeFormatted() {
-				return this.previousTimestamp.format('hh:mm:ss');
+				return this.newTimestamp.format('hh:mm:ss, D-MMM-yyyy')
 			}
 		},
 		destroyed() {
@@ -53,7 +50,6 @@
 		},
 		methods: {
 			fetchData() {
-        this.previousTimestamp = this.newTimestamp;
 				this.newTimestamp = new moment();
 				const url = 'https://api.coingecko.com/api/v3/coins/list';
 				return axios.get(url)
