@@ -32,6 +32,7 @@
 		async mounted () {
 			try {
       	this.newCoinsList = await this.fetchData();
+        this.newCoinsList = Array.isArray(this.newCoinsList) ? this.newCoinsList : [];
 			} catch(err) {
 				console.log(err);
 			}
@@ -72,6 +73,7 @@
 				await this.wait(interval);
 				try {
 	      	this.newCoinsList = await this.fetchData();
+          this.newCoinsList = Array.isArray(this.newCoinsList) ? this.newCoinsList : [];
 				} catch(err) {
 					console.log(err);
 				}
