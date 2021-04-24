@@ -6,3 +6,7 @@ How to run the project
 3. run `yarn install`
 3. run `yarn serve`
 5. open `http://localhost:8080` in your browser
+
+To deploy
+1. pull the repo on the remote machine
+2. run `pm2 start yarn --interpreter bash --name sasta -- serve`
