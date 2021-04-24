@@ -20,5 +20,9 @@ export default [{
     path: '/coins-r-us',
     name: 'Coins',
     component: () => import(/* webpackChunkName: "about" */ '../components/Coinage.vue')
+  }, {
+    path: '/cmc-coins-new',
+    name: 'CMC Coins',
+    component: () => import(/* webpackChunkName: "about" */ '../components/CMCCoinage.vue')
   }
 ];

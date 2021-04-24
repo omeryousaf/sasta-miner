@@ -1,0 +1,27 @@
+{
+  "name": "sasta-miner-server-side",
+  "version": "1.0.0",
+  "description": "reports new coin arrivals",
+  "main": "app.js",
+  "scripts": {
+    "test": "yarn test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omeryousaf/sasta-miner.git"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "coins"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/omeryousaf/sasta-miner/issues"
+  },
+  "homepage": "https://github.com/omeryousaf/sasta-miner#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "request-promise": "^4.2.6"
+  }
+}

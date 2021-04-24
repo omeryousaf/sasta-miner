@@ -29,13 +29,14 @@
 	.side {
 		grid-area: s;
 		background-color: lightgreen;
+		text-align: left;
 	}
 	.main {
 		grid-area: m;
 	}
 	.layout {
 		display: grid;
-		grid-template-columns: 150px auto;
+		grid-template-columns: 250px auto;
 		grid-template-rows: 50px auto;
 		grid-template-areas:'t t'
 												's m';

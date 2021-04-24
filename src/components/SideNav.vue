@@ -4,7 +4,10 @@
 				<router-link to="/contact-us">Contact Us</router-link>
 			</div>
 			<div>
-				<router-link to="/coins-r-us">Coins Page</router-link>
+				<router-link to="/coins-r-us">CoinGecko New Arrivals</router-link>
+			</div>
+			<div>
+				<router-link to="/cmc-coins-new">CoinMarketCap New Arrivals</router-link>
 			</div>
 	</div>
 </template>
