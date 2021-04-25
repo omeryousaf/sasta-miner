@@ -1,4 +1,5 @@
 const rp = require('request-promise');
+const { CMC_API_KEY } = require('./config');
 
 module.exports = class CoinScraper {
   scrapeCMC() {
@@ -13,7 +14,7 @@ module.exports = class CoinScraper {
         'aux': 'date_added'
       },
       headers: {
-        'X-CMC_PRO_API_KEY': 'c9c6a6a6-ecf0-4871-882d-cc6d8840f2d5'
+        'X-CMC_PRO_API_KEY': CMC_API_KEY
       },
       json: true,
       gzip: true
