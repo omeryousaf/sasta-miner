@@ -14,8 +14,8 @@ app.get('/api/new-arrivals', async (req, res) => {
     const response = await scraper.scrapeCMC();
     newCoinsList = response.data;
     newCoinsList = Array.isArray(newCoinsList) ? newCoinsList : [];
-    const cutoffDate = new moment(new Date(CUTOFF_DATE));
-    newCoinsList = newCoinsList.filter((coin) => moment(new Date(coin.date_added)).isAfter(cutoffDate));
+    const cutoffDate = moment(new Date(req.query.cutoff_date || CUTOFF_DATE));
+    newCoinsList = newCoinsList.filter((coin) => moment(coin.date_added).isAfter(cutoffDate));
     res.send(newCoinsList);
   } catch(err) {
     console.log(err);
