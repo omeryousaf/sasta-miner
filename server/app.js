@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 const CoinScraper = require('./coin-scraper');
 
-app.use(express.static('../dist'));
+app.use(express.static('dist'));
 
 app.get('/api/new-arrivals', async (req, res) => {
   let newCoinsList;
