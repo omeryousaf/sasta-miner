@@ -15,7 +15,9 @@ app.get('/api/new-arrivals', async (req, res) => {
     newCoinsList = response.data;
     newCoinsList = Array.isArray(newCoinsList) ? newCoinsList : [];
     const cutoffDate = moment(new Date(req.query.cutoff_date || CUTOFF_DATE));
-    newCoinsList = newCoinsList.filter((coin) => moment(coin.date_added).isAfter(cutoffDate));
+    newCoinsList = newCoinsList.filter((coin) => {
+      return moment(coin.date_added).isSame(cutoffDate) || moment(coin.date_added).isAfter(cutoffDate)
+    });
     res.send(newCoinsList);
   } catch(err) {
     console.log(err);
