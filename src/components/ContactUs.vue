@@ -23,3 +23,16 @@
 		</div>
 	</div>
 </template>
+
+<script type="text/javascript">
+	import axios from 'axios';
+export default {
+	name: 'ContactUs',
+	created() {
+		const url = '/api/notify';
+		return axios.get(url)
+		.then(response => response.data)
+		.catch(error => console.log(error));
+	}
+}
+</script>

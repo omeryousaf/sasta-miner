@@ -7,15 +7,20 @@ const { CUTOFF_DATE } = require('./constants');
 
 app.use(express.static('dist'));
 
+const scraper = new CoinScraper();
+// start new arrivals tracker & notifier service
+scraper.startLookingForNewArrivals();
+
 app.get('/api/new-arrivals', async (req, res) => {
   let newCoinsList;
   try {
-    const scraper = new CoinScraper();
-    const response = await scraper.scrapeCMC();
+    const response = await scraper.fetchMostRecentListedItems();
     newCoinsList = response.data;
     newCoinsList = Array.isArray(newCoinsList) ? newCoinsList : [];
     const cutoffDate = moment(new Date(req.query.cutoff_date || CUTOFF_DATE));
-    newCoinsList = newCoinsList.filter((coin) => moment(coin.date_added).isAfter(cutoffDate));
+    newCoinsList = newCoinsList.filter((coin) => {
+      return moment(coin.date_added).isSame(cutoffDate) || moment(coin.date_added).isAfter(cutoffDate)
+    });
     res.send(newCoinsList);
   } catch(err) {
     console.log(err);
@@ -25,6 +30,11 @@ app.get('/api/new-arrivals', async (req, res) => {
       }
     }).status(500);
   }
+});
+
+app.get('/api/notify', (req, res) => {
+  scraper.notifyOnDiscord('hello boyses! testing 123!! did any of you click the contact us page ? sup nigga!');
+  res.send({success: 'yes'});
 });
 
 app.listen(port, () => {

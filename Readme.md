@@ -10,7 +10,8 @@
 
 ### To deploy
 1. pull the repo on the remote machine
-2. run `yarn install:deps`
-3. run `yarn build`
-4. run `pm2 start server/app.js`
-5. open `http://<remote_server_ip>:3000`
+2. add config.js file inside server/ folder
+3. run `yarn install:deps`
+4. run `yarn build`
+5. run `pm2 start server/app.js`
+6. open `http://<remote_server_ip>:3000`
