@@ -37,6 +37,10 @@ app.get('/api/notify', (req, res) => {
   res.send({success: 'yes'});
 });
 
+app.get('*', (req, res) => {
+  res.sendFile('/dist/index.html', {root: '.'});
+});
+
 app.listen(port, () => {
   console.log(`server app listening at http://localhost:${port}`);
 });
