@@ -58,7 +58,8 @@ module.exports = class CoinScraper {
   async flagNewArrivals() {
     const interval = 20 * 1000;
     await this.wait(interval);
-    this.mostRecentItems = await this.fetchMostRecentListedItems();
+    const response = await this.fetchMostRecentListedItems();
+    this.mostRecentItems = response.data;
     this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
     this.mostRecentItems.push(
     {
