@@ -60,14 +60,23 @@ module.exports = class CoinScraper {
     await this.wait(interval);
     this.mostRecentItems = await this.fetchMostRecentListedItems();
     this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
-    this.mostRecentItems.push({ id: 'dummy', symbol: 'hellooo'})
+    this.mostRecentItems.push(
+    {
+      id: 'dummy',
+      symbol: 'hellooo',
+      quote: {
+        USD: {
+          market_cap: 12345.67890
+        }
+      }
+    });
     const dictionarySize = Object.keys(this.previousItemsMap).length;
     let discoveredAt = null;
     let message = null;
     this.mostRecentItems.map(coin => {
       if(!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment();
-        message = `new coin, id: ${coin.id}, found at ${discoveredAt.format('HH:mm:ss')} on ${discoveredAt.format('D-MMM-yyyy')}`;
+        message = `new coin, id: ${coin.id}, smbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt.format('HH:mm:ss')} on ${discoveredAt.format('D-MMM-yyyy')}`;
         this.notifyOnDiscord(message);
         console.log(message);
       }
