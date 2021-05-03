@@ -62,20 +62,20 @@ module.exports = class CoinScraper {
     this.mostRecentItems = response.data;
     this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
     this.mostRecentItems.push(
-    {
-      id: 'dummy',
-      symbol: 'hellooo',
-      quote: {
-        USD: {
-          market_cap: 12345.67890
+      {
+        id: 'dummy',
+        symbol: 'hellooo',
+        quote: {
+          USD: {
+            market_cap: 12345.67890
+          }
         }
-      }
-    });
+      });
     const dictionarySize = Object.keys(this.previousItemsMap).length;
     let discoveredAt = null;
     let message = null;
     this.mostRecentItems.map(coin => {
-      if(!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
+      if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment();
         message = `new coin, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap} on ${discoveredAt.format('D-MMM-yyyy')}`;
         this.notifyOnDiscord(message);
@@ -86,15 +86,16 @@ module.exports = class CoinScraper {
     this.flagNewArrivals();
   }
 
-  async startLookingForNewArrivals () {
+  async startLookingForNewArrivals() {
     try {
       const response = await this.fetchMostRecentListedItems();
       this.mostRecentItems = response.data;
       this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
       this.updateDictionary();
       this.flagNewArrivals();
-    } catch(err) {
-      console.log(err);
+    } catch (err) {
+      const errorTiming = moment().format('hh:mm:ss');
+      console.log(`${err} at ${errorTiming}`);
     }
   }
 };
