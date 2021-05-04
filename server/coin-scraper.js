@@ -76,8 +76,8 @@ module.exports = class CoinScraper {
     let message = null;
     this.mostRecentItems.map(coin => {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
-        discoveredAt = new moment();
-        message = `new coin, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap} on ${discoveredAt.format('D-MMM-yyyy')}`;
+        discoveredAt = new moment().toString();
+        message = `new coin, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
         this.notifyOnDiscord(message);
         console.log(message);
       }
@@ -94,7 +94,7 @@ module.exports = class CoinScraper {
       this.updateDictionary();
       this.flagNewArrivals();
     } catch (err) {
-      const errorTiming = moment().format('hh:mm:ss');
+      let errorTiming = moment().toString();
       console.log(`${err} at ${errorTiming}`);
     }
   }
