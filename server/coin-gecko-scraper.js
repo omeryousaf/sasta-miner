@@ -1,4 +1,7 @@
 const rp = require('request-promise');
+const { notifyOnDiscord } = require('./commenFunctions');
+
+
 module.exports = class CoinGeckoScraper {
     constructor() {
         this.incomingCoins = [];
@@ -42,26 +45,11 @@ module.exports = class CoinGeckoScraper {
         this.incomingCoins.map(coin => {
             if (!this.storedCoinList[`${coin.id}`]) {
                 message = `New Gecko Coin found, Id =  ${coin.id}, and Name = ${coin.name}`;
-                this.notifyOnDiscord(message);
+                notifyOnDiscord(message);
                 this.updateCoinList(coin);
             }
         })
 
-    }
-    notifyOnDiscord(msg) {
-        const requestOptions = {
-            method: 'POST',
-            uri: DISCORD_WEBHOOK_URLS[0],
-            body: {
-                content: msg
-            },
-            json: true
-        };
-        rp(requestOptions).then(function () {
-            console.log('sent notification to discord');
-        }).catch(function (err) {
-            console.log(err);
-        });
     }
     updateCoinList() {
         this.incomingCoins.map(coin => {
