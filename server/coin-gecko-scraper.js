@@ -1,5 +1,5 @@
 const rp = require('request-promise');
-const { notifyOnDiscord } = require('./commenFunctions');
+const { notifyOnDiscord } = require('./common-functions');
 
 
 module.exports = class CoinGeckoScraper {

@@ -1,7 +1,7 @@
 const moment = require('moment');
 const rp = require('request-promise');
 const { CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnDiscord } = require('./commenFunctions');
+const { notifyOnDiscord } = require('./common-functions');
 
 module.exports = class CoinScraper {
   constructor() {
