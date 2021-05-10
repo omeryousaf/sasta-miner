@@ -9,11 +9,11 @@ const { CUTOFF_DATE } = require('./constants');
 app.use(express.static('dist'));
 
 const scraper = new CoinScraper();
-const coineGeckoScraper = new CoinGeckoScraper();
+const coinGeckoScraper = new CoinGeckoScraper();
 
 // start new arrivals tracker & notifier service
 scraper.startLookingForNewArrivals();
-coineGeckoScraper.coinManagement();
+coinGeckoScraper.coinManagement();
 
 app.get('/api/new-arrivals', async (req, res) => {
   let newCoinsList;
