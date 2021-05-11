@@ -1,4 +1,4 @@
-const rp = require('request-promise');
+const moment = require('moment');
 const { notifyOnDiscord } = require('./common-functions');
 
 
@@ -42,14 +42,15 @@ module.exports = class CoinGeckoScraper {
         console.log('--All coins are stored--')
     }
     checkNewCoin() {
+        let discoveredAt = null;
         this.incomingCoins.map(coin => {
             if (!this.storedCoinList[`${coin.id}`]) {
-                let message = `New Gecko Coin found, Id =  ${coin.id}, and Name = ${coin.name}`;
+                discoveredAt = new moment().toString();
+                let message = `New coin @ CoinGecko, id: ${coin.id}, symbol: ${coin.symbol}, name: ${coin.name}, found at ${discoveredAt}`;
                 notifyOnDiscord(message);
-                this.updateCoinList(coin);
             }
         })
-
+        this.updateCoinList();
     }
     updateCoinList() {
         this.incomingCoins.map(coin => {

@@ -63,7 +63,7 @@ module.exports = class CoinScraper {
     this.mostRecentItems.map(coin => {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
-        message = `new coin, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
+        message = `New coin @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
         notifyOnDiscord(message);
         console.log(message);
       }
