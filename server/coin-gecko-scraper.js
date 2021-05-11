@@ -44,7 +44,7 @@ module.exports = class CoinGeckoScraper {
     checkNewCoin() {
         this.incomingCoins.map(coin => {
             if (!this.storedCoinList[`${coin.id}`]) {
-                message = `New Gecko Coin found, Id =  ${coin.id}, and Name = ${coin.name}`;
+                let message = `New Gecko Coin found, Id =  ${coin.id}, and Name = ${coin.name}`;
                 notifyOnDiscord(message);
                 this.updateCoinList(coin);
             }
