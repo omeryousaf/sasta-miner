@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "install:deps": "yarn install && cd server/ && yarn install && cd .."
+    "install:deps": "yarn install && cd server/ && yarn install && cd ..",
+    "test:server": "cd server/ && yarn test && cd .."
   },
   "dependencies": {
     "axios": "^0.21.1",
