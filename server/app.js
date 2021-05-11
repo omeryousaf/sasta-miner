@@ -12,7 +12,7 @@ const scraper = new CoinScraper();
 const coinGeckoScraper = new CoinGeckoScraper();
 
 // start new arrivals tracker & notifier service
-scraper.startLookingForNewArrivals();
+//scraper.startLookingForNewArrivals();
 coinGeckoScraper.coinManagement();
 
 app.get('/api/new-arrivals', async (req, res) => {
