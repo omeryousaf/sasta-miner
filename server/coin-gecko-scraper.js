@@ -1,4 +1,5 @@
 const moment = require('moment');
+const { DISCORD_WEBHOOK_URLS } = require('./config');
 const { notifyOnDiscord } = require('./common-functions');
 
 
@@ -47,7 +48,7 @@ module.exports = class CoinGeckoScraper {
             if (!this.storedCoinList[`${coin.id}`]) {
                 discoveredAt = new moment().toString();
                 let message = `New @ CoinGecko, id: ${coin.id}, symbol: ${coin.symbol}, name: ${coin.name}, found at ${discoveredAt}`;
-                notifyOnDiscord(message);
+                notifyOnDiscord(message, DISCORD_WEBHOOK_URLS['CGBajwaBot']);
                 console.log(message);
             }
         })

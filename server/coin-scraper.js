@@ -65,7 +65,7 @@ module.exports = class CoinScraper {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
         message = `New @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
-        notifyOnDiscord(message);
+        notifyOnDiscord(message, DISCORD_WEBHOOK_URLS['CMCBajwaBot']);
         console.log(message);
       }
     });
