@@ -15,7 +15,7 @@ module.exports = class CoinScraper {
       uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
       qs: {
         'start': '1',
-        'limit': '500',
+        'limit': '200',
         'sort': 'date_added',
         'sort_dir': 'asc',
         'aux': 'date_added'
@@ -42,13 +42,13 @@ module.exports = class CoinScraper {
   }
 
   async flagNewArrivals() {
-    const interval = 20 * 1000;
+    const interval = 6 * 1000;
     await this.wait(interval);
     const response = await this.fetchMostRecentListedItems();
     this.mostRecentItems = response.data;
     this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
-    this.mostRecentItems.push(
-      {
+    if(process.env.NODE_ENV === 'dev') {
+      this.mostRecentItems.push({
         id: 'dummy',
         symbol: 'hellooo',
         quote: {
@@ -57,13 +57,14 @@ module.exports = class CoinScraper {
           }
         }
       });
+    }
     const dictionarySize = Object.keys(this.previousItemsMap).length;
     let discoveredAt = null;
     let message = null;
     this.mostRecentItems.map(coin => {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
-        message = `New coin @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
+        message = `New @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
         notifyOnDiscord(message);
         console.log(message);
       }

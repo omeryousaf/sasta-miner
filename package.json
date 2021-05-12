@@ -8,7 +8,9 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "install:deps": "yarn install && cd server/ && yarn install && cd ..",
-    "test:server": "cd server/ && yarn test && cd .."
+    "test:server": "cd server/ && NODE_ENV=test yarn test && cd ..",
+    "start:prod": "NODE_ENV=production node server/app.js",
+    "start:dev": "NODE_ENV=dev node server/app.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
