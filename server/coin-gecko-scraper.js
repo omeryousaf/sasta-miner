@@ -1,6 +1,6 @@
+const moment = require('moment');
 const rp = require('request-promise');
 const { notifyOnDiscord } = require('./common-functions');
-
 
 module.exports = class CoinGeckoScraper {
     constructor() {
@@ -29,7 +29,8 @@ module.exports = class CoinGeckoScraper {
                 }
             }
             catch (error) {
-                console.log(error)
+                let errorTiming = moment().toString();
+                console.log(`${error} at ${errorTiming}`)
             }
 
         }, 5000);
