@@ -53,7 +53,6 @@ module.exports = class CoinGeckoScraper {
                 this.storedCoinList[`${coin.id}`] = coin;
             }
         })
-        this.updateCoinList();
     }
 }
 
