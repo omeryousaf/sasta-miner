@@ -2,7 +2,6 @@ const moment = require('moment');
 const { DISCORD_WEBHOOK_URLS } = require('./config');
 const { notifyOnDiscord } = require('./common-functions');
 
-
 module.exports = class CoinGeckoScraper {
     constructor() {
         this.incomingCoins = [];
@@ -31,7 +30,8 @@ module.exports = class CoinGeckoScraper {
                 this.checkNewCoin()
             }
             catch (error) {
-                console.log(error)
+                let errorTiming = moment().toString();
+                console.log(`${error} at ${errorTiming}`)
             }
 
         }, 5000);
@@ -50,14 +50,10 @@ module.exports = class CoinGeckoScraper {
                 let message = `New @ CoinGecko, id: ${coin.id}, symbol: ${coin.symbol}, name: ${coin.name}, found at ${discoveredAt}`;
                 notifyOnDiscord(message, DISCORD_WEBHOOK_URLS['CGBajwaBot']);
                 console.log(message);
+                this.storedCoinList[`${coin.id}`] = coin;
             }
         })
         this.updateCoinList();
-    }
-    updateCoinList() {
-        this.incomingCoins.map(coin => {
-            this.storedCoinList[`${coin.id}`] = coin;
-        });
     }
 }
 
