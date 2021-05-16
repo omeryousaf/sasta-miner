@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require("sinon");
 const FakeTimers = require("@sinonjs/fake-timers");
-var proxyquire =  require('proxyquire');
+const proxyquire =  require('proxyquire');
 
 describe('Coingecko new arrivals alert service', () => {
   let clock;
@@ -53,7 +53,7 @@ describe('Coingecko new arrivals alert service', () => {
     const fakeNotifyOnDiscord = sinon.spy(() => {
       console.log('fake discord notification sent');
     });
-    var CoinGecko = proxyquire('./coin-gecko-scraper', {
+    const CoinGecko = proxyquire('./coin-gecko-scraper', {
       'coingecko-api': MockCoinGecko,
       './common-functions': {
         notifyOnDiscord: fakeNotifyOnDiscord
