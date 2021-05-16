@@ -1,5 +1,5 @@
 const moment = require('moment');
-const rp = require('request-promise');
+const axios = require('axios')
 const { CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
 const { notifyOnDiscord } = require('./common-functions');
 
@@ -9,25 +9,30 @@ module.exports = class CoinScraper {
     this.previousItemsMap = {};
   }
 
-  fetchMostRecentListedItems() {
-    const requestOptions = {
-      method: 'GET',
-      uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
-      qs: {
-        'start': '1',
-        'limit': '200',
-        'sort': 'date_added',
-        'sort_dir': 'asc',
-        'aux': 'date_added'
-      },
-      headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY
-      },
-      json: true,
-      gzip: true
-    };
-
-    return rp(requestOptions);
+  async fetchMostRecentListedItems() {
+    try {
+      const requestOptions = {
+        method: 'GET',
+        url: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
+        qs: {
+          'start': '1',
+          'limit': '500',
+          'sort': 'date_added',
+          'sort_dir': 'asc',
+          'aux': 'date_added'
+        },
+        headers: {
+          'X-CMC_PRO_API_KEY': CMC_API_KEY
+        },
+        json: true,
+        gzip: true
+      };
+      const response = await axios(requestOptions);
+      // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
+      return response.data;
+    } catch (error) {
+      return error;
+    }
   }
 
 
