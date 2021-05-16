@@ -15,3 +15,7 @@
 4. run `yarn build`
 5. run `pm2 start server/app.js`
 6. open `http://<remote_server_ip>:3000`
+
+## To run unit tests
+1. cd into the server/ folder
+2. run `yarn test`

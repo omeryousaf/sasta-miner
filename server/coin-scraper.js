@@ -1,6 +1,7 @@
 const moment = require('moment');
 const rp = require('request-promise');
 const { CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
+const { notifyOnDiscord } = require('./common-functions');
 
 module.exports = class CoinScraper {
   constructor() {
@@ -28,22 +29,7 @@ module.exports = class CoinScraper {
 
     return rp(requestOptions);
   }
-  
-  notifyOnDiscord(msg) {
-    const requestOptions = {
-      method: 'POST',
-      uri: DISCORD_WEBHOOK_URLS[0],
-      body: {
-        content: msg
-      },
-      json: true
-    };
-    rp(requestOptions).then(function () {
-      console.log('sent notification to discord');
-    }).catch(function (err) {
-      console.log(err);
-    });
-  }
+
 
   wait(milliSecs) {
     return new Promise(resolve => setTimeout(resolve, milliSecs));
@@ -78,7 +64,7 @@ module.exports = class CoinScraper {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
         message = `new coin, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
-        this.notifyOnDiscord(message);
+        notifyOnDiscord(message);
         console.log(message);
       }
     });
