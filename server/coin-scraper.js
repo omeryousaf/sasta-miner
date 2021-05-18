@@ -16,7 +16,7 @@ module.exports = class CoinScraper {
         url: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
         qs: {
           'start': '1',
-          'limit': '500',
+          'limit': '200',
           'sort': 'date_added',
           'sort_dir': 'asc',
           'aux': 'date_added'
