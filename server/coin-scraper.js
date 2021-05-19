@@ -31,7 +31,7 @@ module.exports = class CoinScraper {
       // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
       return response.data;
     } catch (error) {
-      return error;
+      throw new Error(error);
     }
   }
 
@@ -52,7 +52,7 @@ module.exports = class CoinScraper {
     const response = await this.fetchMostRecentListedItems();
     this.mostRecentItems = response.data;
     this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
-    if(process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === 'dev') {
       this.mostRecentItems.push({
         id: 'dummy',
         symbol: 'hellooo',
