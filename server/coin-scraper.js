@@ -81,9 +81,6 @@ module.exports = class CoinScraper {
   async startLookingForNewArrivals() {
     try {
       const response = await this.fetchMostRecentListedItems();
-      for (let i = 0; i <= 5; i++) {
-        console.log(response.data[i])
-      }
       this.mostRecentItems = response.data;
       this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
       this.updateDictionary();
