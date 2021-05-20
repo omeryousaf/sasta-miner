@@ -11,10 +11,10 @@ module.exports = class CoinScraper {
 
   async fetchMostRecentListedItems() {
     try {
-      const requestOptions = {
-        method: 'GET',
+      const config = {
         url: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
-        qs: {
+        method: 'get',
+        params: {
           'start': '1',
           'limit': '200',
           'sort': 'date_added',
@@ -27,7 +27,7 @@ module.exports = class CoinScraper {
         json: true,
         gzip: true
       };
-      const response = await axios(requestOptions);
+      const response = await axios(config)
       // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
       return response.data;
     } catch (error) {
@@ -81,6 +81,9 @@ module.exports = class CoinScraper {
   async startLookingForNewArrivals() {
     try {
       const response = await this.fetchMostRecentListedItems();
+      for (let i = 0; i <= 5; i++) {
+        console.log(response.data[i])
+      }
       this.mostRecentItems = response.data;
       this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
       this.updateDictionary();
