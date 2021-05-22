@@ -7,6 +7,10 @@ module.exports = class CoinScraper {
   constructor() {
     this.mostRecentItems = [];
     this.previousItemsMap = {};
+    this.discordWebhookKey = 'CMCBajwaBot';
+    if(process.env.NODE_ENV === 'dev') {
+      this.discordWebhookKey = 'testWeirdoBot';
+    }
   }
 
   async fetchMostRecentListedItems() {
@@ -23,9 +27,7 @@ module.exports = class CoinScraper {
         },
         headers: {
           'X-CMC_PRO_API_KEY': CMC_API_KEY
-        },
-        json: true,
-        gzip: true
+        }
       };
       const response = await axios(config)
       // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
@@ -70,7 +72,7 @@ module.exports = class CoinScraper {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
         message = `New @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
-        notifyOnDiscord(message, DISCORD_WEBHOOK_URLS['CMCBajwaBot']);
+        notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
         console.log(message);
       }
     });
