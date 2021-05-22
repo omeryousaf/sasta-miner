@@ -37,11 +37,6 @@ module.exports = class CoinScraper {
     }
   }
 
-
-  wait(milliSecs) {
-    return new Promise(resolve => setTimeout(resolve, milliSecs));
-  }
-
   updateDictionary() {
     this.mostRecentItems.map(coin => {
       this.previousItemsMap[`${coin.id}`] = coin;
@@ -49,37 +44,38 @@ module.exports = class CoinScraper {
   }
 
   async flagNewArrivals() {
-    const interval = 6 * 1000;
-    await this.wait(interval);
-    const response = await this.fetchMostRecentListedItems();
-    this.mostRecentItems = response.data;
-    this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
-    if (process.env.NODE_ENV === 'dev') {
-      this.mostRecentItems.push({
-        id: 'dummy',
-        symbol: 'hellooo',
-        quote: {
-          USD: {
-            market_cap: 12345.67890
+    try {
+      const response = await this.fetchMostRecentListedItems();
+      this.mostRecentItems = response.data;
+      this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
+      if (process.env.NODE_ENV === 'dev') {
+        this.mostRecentItems.push({
+          id: 'dummy',
+          symbol: 'hellooo',
+          quote: {
+            USD: {
+              market_cap: 12345.67890
+            }
           }
+        });
+      }
+      const dictionarySize = Object.keys(this.previousItemsMap).length;
+      let discoveredAt = null;
+      let message = null;
+      let tokenAddress = null;
+      this.mostRecentItems.map(coin => {
+        if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
+          discoveredAt = new moment().toString();
+          tokenAddress = coin.platform ? coin.platform.token_address : coin.platform;
+          message = `New @ CoinMarketCap:\n\tid: ${coin.id},\n\tsymbol: ${coin.symbol},\n\tmarket_cap: ${coin.quote.USD.market_cap},\n\ttoken_address: ${tokenAddress},\nfound at ${discoveredAt}`;
+          notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
+          console.log(message);
         }
       });
+      this.updateDictionary();
+    } catch(error) {
+      this.logError(error);
     }
-    const dictionarySize = Object.keys(this.previousItemsMap).length;
-    let discoveredAt = null;
-    let message = null;
-    let tokenAddress = null;
-    this.mostRecentItems.map(coin => {
-      if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
-        discoveredAt = new moment().toString();
-        tokenAddress = coin.platform ? coin.platform.token_address : coin.platform;
-        message = `New @ CoinMarketCap:\n\tid: ${coin.id},\n\tsymbol: ${coin.symbol},\n\tmarket_cap: ${coin.quote.USD.market_cap},\n\ttoken_address: ${tokenAddress},\nfound at ${discoveredAt}`;
-        notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
-        console.log(message);
-      }
-    });
-    this.updateDictionary();
-    this.flagNewArrivals();
   }
 
   async startLookingForNewArrivals() {
@@ -88,11 +84,18 @@ module.exports = class CoinScraper {
       this.mostRecentItems = response.data;
       this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
       this.updateDictionary();
-      this.flagNewArrivals();
+      const interval = 6 * 1000;
+      setInterval(() => {
+        this.flagNewArrivals();
+      }, interval);
     } catch (err) {
-      let errorTiming = moment().toString();
-      console.log(err);
-      console.log(` at ${errorTiming}`);
+      this.logError(err);
     }
+  }
+
+  logError(error) {
+    let errorTiming = moment().toString();
+    console.log(error);
+    console.log(` at ${errorTiming}`);
   }
 };
