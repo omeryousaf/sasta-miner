@@ -33,7 +33,6 @@ module.exports = class CoinScraper {
       // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
       return response.data;
     } catch (error) {
-      console.log(error.stack);
       throw new Error(error);
     }
   }
@@ -74,7 +73,7 @@ module.exports = class CoinScraper {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
         tokenAddress = coin.platform ? coin.platform.token_address : coin.platform;
-        message = `New @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, token_address: ${tokenAddress} found at ${discoveredAt}`;
+        message = `New @ CoinMarketCap:\n\tid: ${coin.id},\n\tsymbol: ${coin.symbol},\n\tmarket_cap: ${coin.quote.USD.market_cap},\n\ttoken_address: ${tokenAddress},\nfound at ${discoveredAt}`;
         notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
         console.log(message);
       }
