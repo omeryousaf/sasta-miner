@@ -1,4 +1,5 @@
 const moment = require('moment');
+const axios = require('axios');
 const { DISCORD_WEBHOOK_URLS } = require('./config');
 const { notifyOnDiscord } = require('./common-functions');
 
@@ -11,19 +12,21 @@ module.exports = class CoinGeckoScraper {
     async coinManagement() {
         setInterval(async () => {
             try {
-                const CoinGecko = require('coingecko-api');
-                const CoinGeckoClient = new CoinGecko();
                 // Get all coins
-                let response = await CoinGeckoClient.coins.list();
+                let response = await axios.get('https://api.coingecko.com/api/v3/coins/list?include_platform=true');
                 this.incomingCoins = response.data || [];
                 const dictionarySize = Object.keys(this.storedCoinList).length;
                 if (dictionarySize === 0) {
                     this.storeCoins()
-                    if(process.env.NODE_ENV === 'dev') {
+                    if (process.env.NODE_ENV === 'dev') {
                         this.incomingCoins.push({
                             id: 'dummy',
                             symbol: 'hellooo',
-                            name: 'Dummy Gecko'
+                            name: 'Dummy Gecko',
+                            platforms: {
+                                etherium: '1234',
+                                bitcoin: '2345'
+                            }
                         })
                     }
                 }
@@ -47,7 +50,10 @@ module.exports = class CoinGeckoScraper {
         this.incomingCoins.map(coin => {
             if (!this.storedCoinList[`${coin.id}`]) {
                 discoveredAt = new moment().toString();
-                let message = `New @ CoinGecko, id: ${coin.id}, symbol: ${coin.symbol}, name: ${coin.name}, found at ${discoveredAt}`;
+                let { id, name, symbol } = coin;
+                let platforms = Object.keys(coin.platforms).length === 0 ? 'Not Found' : JSON.stringify(coin.platforms);
+
+                let message = `New @ CoinGecko, id: ${id}, symbol: ${symbol}, name: ${name}, platforms: ${platforms} found at ${discoveredAt}`;
                 notifyOnDiscord(message, DISCORD_WEBHOOK_URLS['CGBajwaBot']);
                 console.log(message);
                 this.storedCoinList[`${coin.id}`] = coin;
