@@ -23,7 +23,7 @@ module.exports = class CoinScraper {
           'limit': '200',
           'sort': 'date_added',
           'sort_dir': 'asc',
-          'aux': 'date_added'
+          'aux': 'date_added,platform'
         },
         headers: {
           'X-CMC_PRO_API_KEY': CMC_API_KEY
@@ -33,6 +33,7 @@ module.exports = class CoinScraper {
       // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
       return response.data;
     } catch (error) {
+      console.log(error.stack);
       throw new Error(error);
     }
   }
@@ -68,10 +69,12 @@ module.exports = class CoinScraper {
     const dictionarySize = Object.keys(this.previousItemsMap).length;
     let discoveredAt = null;
     let message = null;
+    let tokenAddress = null;
     this.mostRecentItems.map(coin => {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
-        message = `New @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
+        tokenAddress = coin.platform ? coin.platform.token_address : coin.platform;
+        message = `New @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, token_address: ${tokenAddress} found at ${discoveredAt}`;
         notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
         console.log(message);
       }
@@ -89,7 +92,8 @@ module.exports = class CoinScraper {
       this.flagNewArrivals();
     } catch (err) {
       let errorTiming = moment().toString();
-      console.log(`${err} at ${errorTiming}`);
+      console.log(err);
+      console.log(` at ${errorTiming}`);
     }
   }
 };
