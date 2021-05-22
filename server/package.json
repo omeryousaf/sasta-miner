@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/omeryousaf/sasta-miner#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "express": "^4.17.1",
     "moment": "^2.29.1",
     "request-promise": "^4.2.6"

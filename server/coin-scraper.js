@@ -1,5 +1,5 @@
 const moment = require('moment');
-const rp = require('request-promise');
+const axios = require('axios')
 const { CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
 const { notifyOnDiscord } = require('./common-functions');
 
@@ -7,27 +7,34 @@ module.exports = class CoinScraper {
   constructor() {
     this.mostRecentItems = [];
     this.previousItemsMap = {};
+    this.discordWebhookKey = 'CMCBajwaBot';
+    if(process.env.NODE_ENV === 'dev') {
+      this.discordWebhookKey = 'testWeirdoBot';
+    }
   }
 
-  fetchMostRecentListedItems() {
-    const requestOptions = {
-      method: 'GET',
-      uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
-      qs: {
-        'start': '1',
-        'limit': '200',
-        'sort': 'date_added',
-        'sort_dir': 'asc',
-        'aux': 'date_added'
-      },
-      headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY
-      },
-      json: true,
-      gzip: true
-    };
-
-    return rp(requestOptions);
+  async fetchMostRecentListedItems() {
+    try {
+      const config = {
+        url: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
+        method: 'get',
+        params: {
+          'start': '1',
+          'limit': '200',
+          'sort': 'date_added',
+          'sort_dir': 'asc',
+          'aux': 'date_added'
+        },
+        headers: {
+          'X-CMC_PRO_API_KEY': CMC_API_KEY
+        }
+      };
+      const response = await axios(config)
+      // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
+      return response.data;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
 
@@ -47,7 +54,7 @@ module.exports = class CoinScraper {
     const response = await this.fetchMostRecentListedItems();
     this.mostRecentItems = response.data;
     this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
-    if(process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === 'dev') {
       this.mostRecentItems.push({
         id: 'dummy',
         symbol: 'hellooo',
@@ -65,7 +72,7 @@ module.exports = class CoinScraper {
       if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
         discoveredAt = new moment().toString();
         message = `New @ CoinMarketCap, id: ${coin.id}, symbol: ${coin.symbol}, market_cap: ${coin.quote.USD.market_cap}, found at ${discoveredAt}`;
-        notifyOnDiscord(message, DISCORD_WEBHOOK_URLS['CMCBajwaBot']);
+        notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
         console.log(message);
       }
     });
