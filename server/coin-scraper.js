@@ -1,7 +1,7 @@
 const moment = require('moment');
 const axios = require('axios')
 const { CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnDiscord } = require('./common-functions');
+const { notifyOnDiscord, logError } = require('./common-functions');
 
 module.exports = class CoinScraper {
   constructor() {
@@ -74,7 +74,7 @@ module.exports = class CoinScraper {
       });
       this.updateDictionary();
     } catch(error) {
-      this.logError(error);
+      logError(error);
     }
   }
 
@@ -89,13 +89,8 @@ module.exports = class CoinScraper {
         this.flagNewArrivals();
       }, interval);
     } catch (err) {
-      this.logError(err);
+      logError(err);
     }
   }
 
-  logError(error) {
-    let errorTiming = moment().toString();
-    console.log(error);
-    console.log(` at ${errorTiming}`);
-  }
 };

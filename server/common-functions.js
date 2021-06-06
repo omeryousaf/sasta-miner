@@ -1,4 +1,5 @@
 const rp = require('request-promise');
+const moment = require('moment');
 
 const notifyOnDiscord = (msg, discordWebhookUrl) => {
     const requestOptions = {
@@ -16,6 +17,13 @@ const notifyOnDiscord = (msg, discordWebhookUrl) => {
     });
 }
 
+const logError = (error) => {
+    let errorTiming = moment().toString();
+    console.log(error);
+    console.log(`at ${errorTiming}`);
+}
+
 module.exports = {
-    notifyOnDiscord
+    notifyOnDiscord,
+    logError
 }
