@@ -1,21 +1,25 @@
 const rp = require('request-promise');
 const moment = require('moment');
+const axios = require('axios');
 
-const notifyOnDiscord = (msg, discordWebhookUrl) => {
-    const requestOptions = {
-        method: 'POST',
-        uri: discordWebhookUrl,
-        body: {
-            content: msg
-        },
-        json: true
-    };
-    rp(requestOptions).then(function () {
+
+const notifyOnDiscord = async (msg, discordWebhookUrl) => {
+    try {
+        const config = {
+            url: discordWebhookUrl,
+            method: 'POST',
+            data: {
+                content: msg
+            },
+            responseType: 'json'
+        };
+        await axios(config)
         console.log('sent notification to discord');
-    }).catch(function (err) {
-        console.log(err);
-    });
+    } catch (error) {
+        console.log(error);
+    }
 }
+
 
 const logError = (error) => {
     let errorTiming = moment().toString();
