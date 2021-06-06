@@ -1,7 +1,7 @@
 const moment = require('moment');
 const axios = require('axios');
 const { DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnDiscord } = require('./common-functions');
+const { notifyOnDiscord, logError } = require('./common-functions');
 
 module.exports = class CoinGeckoScraper {
     constructor() {
@@ -37,8 +37,7 @@ module.exports = class CoinGeckoScraper {
                 this.checkNewCoin()
             }
             catch (error) {
-                let errorTiming = moment().toString();
-                console.log(`${error} at ${errorTiming}`)
+                logError(error);
             }
 
         }, 5000);
