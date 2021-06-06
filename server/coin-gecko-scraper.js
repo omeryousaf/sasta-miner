@@ -7,6 +7,10 @@ module.exports = class CoinGeckoScraper {
     constructor() {
         this.incomingCoins = [];
         this.storedCoinList = {};
+        this.discordWebhookKey = 'CGBajwaBot';
+        if(process.env.NODE_ENV === 'dev') {
+          this.discordWebhookKey = 'testWeirdoBot';
+        }
     }
 
     async coinManagement() {
@@ -25,7 +29,7 @@ module.exports = class CoinGeckoScraper {
                             name: 'Dummy Gecko',
                             platforms: {
                                 etherium: '1234',
-                                bitcoin: '2345'
+                                bitcoin: ''
                             }
                         })
                     }
@@ -51,10 +55,11 @@ module.exports = class CoinGeckoScraper {
             if (!this.storedCoinList[`${coin.id}`]) {
                 discoveredAt = new moment().toString();
                 let { id, name, symbol } = coin;
-                let platforms = Object.keys(coin.platforms).length === 0 ? 'Not Found' : JSON.stringify(coin.platforms);
-
-                let message = `New @ CoinGecko, id: ${id}, symbol: ${symbol}, name: ${name}, platforms: ${platforms} found at ${discoveredAt}`;
-                notifyOnDiscord(message, DISCORD_WEBHOOK_URLS['CGBajwaBot']);
+                let platforms = Object.keys(coin.platforms).length > 0 ? Object.keys(coin.platforms).map((platformName) => {
+                    return `\n\t\t${platformName}: ${coin.platforms[platformName] || null}`;
+                }) : 'Not Found';
+                let message = `New @ CoinGecko:\n\tid: ${id},\n\tsymbol: ${symbol},\n\tname: ${name},\n\ttoken_addresses: ${platforms},\nfound at ${discoveredAt}`;
+                notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
                 console.log(message);
                 this.storedCoinList[`${coin.id}`] = coin;
             }
