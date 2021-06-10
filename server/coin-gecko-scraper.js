@@ -40,7 +40,7 @@ module.exports = class CoinGeckoScraper {
                 logError(error);
             }
 
-        }, 5000);
+        }, 15000);
     }
 
     storeCoins() {
