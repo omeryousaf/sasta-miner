@@ -50,6 +50,7 @@ module.exports = class CoinGeckoScraper {
                 }
                 else {
                     logError(error);
+                    setTimeout(callApi, this.interval);
                 }
             }
         }
