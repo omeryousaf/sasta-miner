@@ -7,14 +7,15 @@ module.exports = class CoinGeckoScraper {
     constructor() {
         this.incomingCoins = [];
         this.storedCoinList = {};
+        this.interval = 5000;
         this.discordWebhookKey = 'CGBajwaBot';
-        if(process.env.NODE_ENV === 'dev') {
-          this.discordWebhookKey = 'testWeirdoBot';
+        if (process.env.NODE_ENV === 'dev') {
+            this.discordWebhookKey = 'testWeirdoBot';
         }
     }
 
-    async coinManagement() {
-        setInterval(async () => {
+    coinManagement() {
+        const callApi = async () => {
             try {
                 // Get all coins
                 let response = await axios.get('https://api.coingecko.com/api/v3/coins/list?include_platform=true');
@@ -22,6 +23,8 @@ module.exports = class CoinGeckoScraper {
                 const dictionarySize = Object.keys(this.storedCoinList).length;
                 if (dictionarySize === 0) {
                     this.storeCoins()
+                }
+                else {
                     if (process.env.NODE_ENV === 'dev') {
                         this.incomingCoins.push({
                             id: 'dummy',
@@ -33,14 +36,24 @@ module.exports = class CoinGeckoScraper {
                             }
                         })
                     }
+                    this.checkNewCoin()
                 }
-                this.checkNewCoin()
+                this.interval = 5000;
+                setTimeout(callApi, this.interval);
+            } catch (error) {
+                if (error.response.status == 429) {
+                    const retryAfter = error.response.headers['retry-after'];
+                    this.interval = retryAfter * 1000 + 2000
+                    console.log(`Response Status = ${error.response.status} Interval = ${this.interval}`)
+                    setTimeout(callApi, this.interval);
+                }
+                else {
+                    logError(error);
+                    setTimeout(callApi, this.interval);
+                }
             }
-            catch (error) {
-                logError(error);
-            }
-
-        }, 5000);
+        }
+        setTimeout(callApi, this.interval);
     }
 
     storeCoins() {
