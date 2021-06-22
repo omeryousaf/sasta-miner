@@ -39,7 +39,6 @@ module.exports = class CoinGeckoScraper {
                     this.checkNewCoin()
                 }
                 this.interval = 5000;
-                console.log(`Response Status = ${response.status} Interval = ${this.interval}`)
                 setTimeout(callApi, this.interval);
             } catch (error) {
                 if (error.response.status == 429) {
