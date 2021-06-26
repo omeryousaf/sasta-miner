@@ -22,7 +22,7 @@ module.exports = class CoinScraper {
           'start': '1',
           'limit': '200',
           'sort': 'date_added',
-          'sort_dir': 'asc',
+          'sort_dir': 'desc',
           'aux': 'date_added,platform'
         },
         headers: {
