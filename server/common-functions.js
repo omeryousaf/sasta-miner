@@ -17,8 +17,22 @@ const notifyOnDiscord = async (msg, discordWebhookUrl) => {
     } catch (error) {
         console.log(error);
     }
-}
+};
 
+const notifyOnTelegram = async (msg, webhookUrl) => {
+  msg = msg || `Hello friends.. chai pi lo!`;
+  try {
+    const config = {
+      url:`${webhookUrl}&text=${msg}`,
+      method: 'GET',
+      responseType: 'json'
+    };
+    await axios(config);
+    console.log('sent notification to telegram bot');
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const logError = (error) => {
     let errorTiming = moment().toString();
@@ -27,6 +41,7 @@ const logError = (error) => {
 }
 
 module.exports = {
+    notifyOnTelegram,
     notifyOnDiscord,
     logError
 }

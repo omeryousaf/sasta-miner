@@ -1,12 +1,13 @@
 const moment = require('moment');
 const axios = require('axios')
-const { CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnDiscord, logError } = require('./common-functions');
+const { TELEGRAM_WEBHOOK_URLS, CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
+const { notifyOnTelegram, notifyOnDiscord, logError } = require('./common-functions');
 
 module.exports = class CoinScraper {
   constructor() {
     this.mostRecentItems = [];
     this.previousItemsMap = {};
+    this.telegramWebhookKey = 'TelegramBot';
     this.discordWebhookKey = 'CMCBajwaBot';
     if(process.env.NODE_ENV === 'dev') {
       this.discordWebhookKey = 'testWeirdoBot';
@@ -68,6 +69,7 @@ module.exports = class CoinScraper {
           discoveredAt = new moment().toString();
           tokenAddress = coin.platform ? coin.platform.token_address : coin.platform;
           message = `New @ CoinMarketCap:\n\tid: ${coin.id},\n\tsymbol: ${coin.symbol},\n\tmarket_cap: ${coin.quote.USD.market_cap},\n\ttoken_address: ${tokenAddress},\nfound at ${discoveredAt}`;
+          notifyOnTelegram(message, TELEGRAM_WEBHOOK_URLS[this.telegramWebhookKey]);
           notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
           console.log(message);
         }
