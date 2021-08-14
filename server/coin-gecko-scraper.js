@@ -72,13 +72,13 @@ module.exports = class CoinGeckoScraper {
                 let platforms = Object.keys(coin.platforms).length > 0 ? Object.keys(coin.platforms).map((platformName) => {
                     return `\n\t\t${platformName}: ${coin.platforms[platformName] || null}`;
                 }) : 'Not Found';
-                let message = `New @ CoinGecko:\n\tid: ${id},
-                \n\tsymbol: ${symbol},
-                \n\tname: ${name},
-                \n\ttoken_addresses: ${platforms},
-                \n\tlink: https://www.coingecko.com/en/coins/${id}
-                \nfound at ${discoveredAt}. 
-                 `;
+                let message = `New @ CoinGecko:` +
+                    `\n\tid: ${id},` +
+                    `\n\tsymbol: ${symbol},` +
+                    `\n\tname: ${name},` +
+                    `\n\ttoken_addresses: ${platforms},` +
+                    `\n\tlink: https://www.coingecko.com/en/coins/${id}` +
+                    `\nfound at ${discoveredAt}.`;
                 notifyOnTelegram(message, TELEGRAM_WEBHOOK_URLS[this.telegramWebhookKey]);
                 notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
                 console.log(message);
