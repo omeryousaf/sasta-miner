@@ -43,7 +43,11 @@ module.exports = class CoinGeckoScraper {
                 this.interval = 5000;
                 setTimeout(callApi, this.interval);
             } catch (error) {
-                if (error.response.status == 429) {
+                if(error.response === undefined){
+                    logError('Response is undefined');
+                    setTimeout(callApi, this.interval);
+                }
+                else if (error.response.status === 429){
                     const retryAfter = error.response.headers['retry-after'];
                     this.interval = retryAfter * 1000 + 2000
                     console.log(`Response Status = ${error.response.status} Interval = ${this.interval}`)
