@@ -5,6 +5,7 @@ const port = 3000;
 const CoinGeckoScraper = require('./coin-gecko-scraper');
 const CoinScraper = require('./coin-scraper');
 const { CUTOFF_DATE } = require('./constants');
+const fs = require('fs')
 
 app.use(express.static('dist'));
 
@@ -39,6 +40,16 @@ app.get('/api/new-arrivals', async (req, res) => {
 app.get('/api/notify', (req, res) => {
   scraper.notifyOnDiscord('hello boyses! testing 123!! did any of you click the contact us page ? sup nigga!');
   res.send({ success: 'yes' });
+});
+
+app.get('/api/coins-update', (req, res) => {
+  try {
+    const jsString = fs.readFileSync(__dirname + '/lastUpdate.json', 'utf-8')
+    res.send({ data: jsString }).status(200);
+  } catch (err) {
+    console.log(err);
+    res.send({ error: err }).status(500);
+  }
 });
 
 app.get('*', (req, res) => {
