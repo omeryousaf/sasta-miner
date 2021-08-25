@@ -1,7 +1,7 @@
 const moment = require('moment');
 const axios = require('axios')
 const { TELEGRAM_WEBHOOK_URLS, CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnTelegram, notifyOnDiscord, logError } = require('./common-functions');
+const { notifyOnTelegram, notifyOnDiscord, logError, updateJsonFile } = require('./common-functions');
 
 module.exports = class CoinScraper {
   constructor() {
@@ -47,8 +47,10 @@ module.exports = class CoinScraper {
   async flagNewArrivals() {
     try {
       const response = await this.fetchMostRecentListedItems();
+      updateJsonFile('cmc');
       this.mostRecentItems = response.data;
       this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
+
       if (process.env.NODE_ENV === 'dev') {
         this.mostRecentItems.push({
           id: 'dummy',

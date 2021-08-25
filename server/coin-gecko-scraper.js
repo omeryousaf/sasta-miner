@@ -1,7 +1,7 @@
 const moment = require('moment');
 const axios = require('axios');
 const { TELEGRAM_WEBHOOK_URLS, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnTelegram, notifyOnDiscord, logError } = require('./common-functions');
+const { notifyOnTelegram, notifyOnDiscord, logError, updateJsonFile } = require('./common-functions');
 
 module.exports = class CoinGeckoScraper {
     constructor() {
@@ -20,6 +20,7 @@ module.exports = class CoinGeckoScraper {
             try {
                 // Get all coins
                 let response = await axios.get('https://api.coingecko.com/api/v3/coins/list?include_platform=true');
+                updateJsonFile('gecko');
                 this.incomingCoins = response.data || [];
                 const dictionarySize = Object.keys(this.storedCoinList).length;
                 if (dictionarySize === 0) {
@@ -43,11 +44,11 @@ module.exports = class CoinGeckoScraper {
                 this.interval = 5000;
                 setTimeout(callApi, this.interval);
             } catch (error) {
-                if(error.response === undefined){
+                if (error.response === undefined) {
                     logError('Response is undefined');
                     setTimeout(callApi, this.interval);
                 }
-                else if (error.response.status === 429){
+                else if (error.response.status === 429) {
                     const retryAfter = error.response.headers['retry-after'];
                     this.interval = retryAfter * 1000 + 2000
                     console.log(`Response Status = ${error.response.status} Interval = ${this.interval}`)

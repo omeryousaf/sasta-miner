@@ -1,29 +1,30 @@
 const moment = require('moment');
 const axios = require('axios');
+const fs = require('fs')
 
 
 const notifyOnDiscord = async (msg, discordWebhookUrl) => {
-    try {
-        const config = {
-            url: discordWebhookUrl,
-            method: 'POST',
-            data: {
-                content: msg
-            },
-            responseType: 'json'
-        };
-        await axios(config)
-        console.log('sent notification to discord');
-    } catch (error) {
-        console.log(error);
-    }
+  try {
+    const config = {
+      url: discordWebhookUrl,
+      method: 'POST',
+      data: {
+        content: msg
+      },
+      responseType: 'json'
+    };
+    await axios(config)
+    console.log('sent notification to discord');
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const notifyOnTelegram = async (msg, webhookUrl) => {
   msg = msg || `Hello friends.. chai pi lo!`;
   try {
     const config = {
-      url:`${webhookUrl}&text=${msg}`,
+      url: `${webhookUrl}&text=${msg}`,
       method: 'GET',
       responseType: 'json'
     };
@@ -35,13 +36,29 @@ const notifyOnTelegram = async (msg, webhookUrl) => {
 };
 
 const logError = (error) => {
-    let errorTiming = moment().toString();
-    console.log(error);
-    console.log(`at ${errorTiming}`);
+  let errorTiming = moment().toString();
+  console.log(error);
+  console.log(`at ${errorTiming}`);
+}
+
+const updateJsonFile = (coin) => {
+  try {
+    const jsString = fs.readFileSync(__dirname + '/lastUpdate.json', 'utf-8')
+    let data = JSON.parse(jsString)
+    if (coin == 'gecko') {
+      data.coinGeckoLastUpdate = moment().format('hh:mm:ss DD-MMMM-YYYY')
+    } else {
+      data.cmcLastUpdate = moment().format('hh:mm:ss DD-MMMM-YYYY')
+    }
+    fs.writeFileSync(__dirname + '/lastUpdate.json', JSON.stringify(data, null, 2))
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 module.exports = {
-    notifyOnTelegram,
-    notifyOnDiscord,
-    logError
+  notifyOnTelegram,
+  notifyOnDiscord,
+  logError,
+  updateJsonFile
 }
