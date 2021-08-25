@@ -15,14 +15,18 @@ export default [{
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import(/* webpackChunkName: "About" */ '../views/About.vue')
   }, {
     path: '/coins-r-us',
     name: 'Coins',
-    component: () => import(/* webpackChunkName: "about" */ '../components/Coinage.vue')
+    component: () => import(/* webpackChunkName: "Coinage" */ '../components/Coinage.vue')
   }, {
     path: '/cmc-coins-new',
     name: 'CMC Coins',
-    component: () => import(/* webpackChunkName: "about" */ '../components/CMCCoinage.vue')
+    component: () => import(/* webpackChunkName: "CMCCoinage" */ '../components/CMCCoinage.vue')
+  }, {
+    path: '/last-polled',
+    name: 'Healthcheck',
+    component: () => import(/* webpackChunkName: "Healthcheck" */ '../components/Healthcheck.vue')
   }
 ];
