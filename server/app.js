@@ -38,17 +38,16 @@ app.get('/api/new-arrivals', async (req, res) => {
 });
 
 app.get('/api/notify', (req, res) => {
-  scraper.notifyOnDiscord('hello boyses! testing 123!! did any of you click the contact us page ? sup nigga!');
   res.send({ success: 'yes' });
 });
 
 app.get('/api/coins-update', (req, res) => {
   try {
     const jsString = fs.readFileSync(__dirname + '/lastUpdate.json', 'utf-8')
-    res.send({ data: jsString }).status(200);
+    res.send(JSON.parse(jsString)).status(200);
   } catch (err) {
     console.log(err);
-    res.send({ error: err }).status(500);
+    res.status(500).send({ error: err });
   }
 });
 

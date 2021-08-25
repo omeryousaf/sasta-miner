@@ -9,6 +9,9 @@
 			<div>
 				<router-link to="/cmc-coins-new">CoinMarketCap New Arrivals</router-link>
 			</div>
+			<div>
+				<router-link to="/last-polled">Health Check</router-link>
+			</div>
 	</div>
 </template>
 
