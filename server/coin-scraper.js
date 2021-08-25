@@ -47,12 +47,9 @@ module.exports = class CoinScraper {
   async flagNewArrivals() {
     try {
       const response = await this.fetchMostRecentListedItems();
+      updateJsonFile('cmc');
       this.mostRecentItems = response.data;
       this.mostRecentItems = Array.isArray(this.mostRecentItems) ? this.mostRecentItems : [];
-      if (response.data) {
-        let coin = 'cmc'
-        updateJsonFile(coin);
-    }
 
       if (process.env.NODE_ENV === 'dev') {
         this.mostRecentItems.push({

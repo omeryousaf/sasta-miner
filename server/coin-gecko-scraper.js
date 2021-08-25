@@ -20,10 +20,7 @@ module.exports = class CoinGeckoScraper {
             try {
                 // Get all coins
                 let response = await axios.get('https://api.coingecko.com/api/v3/coins/list?include_platform=true');
-                if (response) {
-                    let coin = 'gecko'
-                    updateJsonFile(coin);
-                }
+                updateJsonFile('gecko');
                 this.incomingCoins = response.data || [];
                 const dictionarySize = Object.keys(this.storedCoinList).length;
                 if (dictionarySize === 0) {
