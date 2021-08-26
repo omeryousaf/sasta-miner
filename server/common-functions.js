@@ -46,9 +46,9 @@ const updateJsonFile = (coin) => {
     const jsString = fs.readFileSync(__dirname + '/lastUpdate.json', 'utf-8')
     let data = JSON.parse(jsString)
     if (coin == 'gecko') {
-      data.coinGeckoLastUpdate = moment().format('hh:mm:ss DD-MMMM-YYYY')
+      data.coinGeckoLastUpdate = moment().toString()
     } else {
-      data.cmcLastUpdate = moment().format('hh:mm:ss DD-MMMM-YYYY')
+      data.cmcLastUpdate = moment().toString()
     }
     fs.writeFileSync(__dirname + '/lastUpdate.json', JSON.stringify(data, null, 2))
   } catch (error) {
