@@ -22,4 +22,8 @@
 	.mb_1Rem {
 		margin-bottom: 1rem;
 	}
+	.router-link-active {
+		background: slateblue;
+		color: white;
+	}
 </style>

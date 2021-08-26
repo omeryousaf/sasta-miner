@@ -44,3 +44,9 @@
     }
   }
 </script>
+
+<style scoped lang="scss">
+  ul {
+    text-align: left;
+  }
+</style>
