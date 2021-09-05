@@ -16,8 +16,11 @@ module.exports = class CoinGeckoScraper {
     }
 
     coinManagement() {
-        const callApi = async () => {
+        const callApi = async (fromCatchBlock) => {
             try {
+                if(fromCatchBlock) {
+                    console.log('CG polling method `callApi()` called after an error');
+                }
                 // Get all coins
                 let response = await axios.get('https://api.coingecko.com/api/v3/coins/list?include_platform=true');
                 updateJsonFile('gecko');
@@ -46,17 +49,23 @@ module.exports = class CoinGeckoScraper {
             } catch (error) {
                 if (error.response === undefined) {
                     logError('Response is undefined');
-                    setTimeout(callApi, this.interval);
+                    setTimeout(() => {
+                        callApi(true);
+                    }, this.interval);
                 }
                 else if (error.response.status === 429) {
                     const retryAfter = error.response.headers['retry-after'];
                     this.interval = retryAfter * 1000 + 2000
                     console.log(`Response Status = ${error.response.status} Interval = ${this.interval}`)
-                    setTimeout(callApi, this.interval);
+                    setTimeout(() => {
+                        callApi(true);
+                    }, this.interval);
                 }
                 else {
                     logError(error);
-                    setTimeout(callApi, this.interval);
+                    setTimeout(() => {
+                        callApi(true);
+                    }, this.interval);
                 }
             }
         }
