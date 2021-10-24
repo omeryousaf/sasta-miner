@@ -6,6 +6,7 @@ const CoinGeckoScraper = require('./coin-gecko-scraper');
 const CoinScraper = require('./coin-scraper');
 const { CUTOFF_DATE } = require('./constants');
 const fs = require('fs')
+const axios = require('axios');
 
 app.use(express.static('dist'));
 
@@ -16,6 +17,38 @@ const coinGeckoScraper = new CoinGeckoScraper();
 scraper.startLookingForNewArrivals();
 coinGeckoScraper.coinManagement();
 
+axios.interceptors.request.use(x => {
+  x.meta = x.meta || {}
+  x.meta.requestStartedAt = new Date().getTime();
+  return x;
+});
+axios.interceptors.response.use(x => {
+  const duration = new Date().getTime() - x.config.meta.requestStartedAt; // milliseconds since epo
+  if(duration / (60 * 1000) > 5) {
+    // it took more than 5 mins for the response to come by, log the api call
+    console.log(`Successful execution time for api request:`);
+    console.log({
+      url: x.config.url,
+      startTime: moment(x.config.meta.requestStartedAt).toString(),
+      endTime: moment(x.config.meta.requestStartedAt + duration).toString()
+    });
+  }
+  return x;
+}, x => {
+  // Handle 4xx & 5xx responses
+  const duration = new Date().getTime() - x.config.meta.requestStartedAt; // milliseconds since epo
+  if(duration / (60 * 1000) > 5) {
+    // it took more than 5 mins for the (error) response to come by, log the api call
+    console.log(`Failure execution time for api request:`);
+    console.log({
+      url: x.config.url,
+      startTime: moment(x.config.meta.requestStartedAt).toString(),
+      endTime: moment(x.config.meta.requestStartedAt + duration).toString()
+    });
+  }
+  throw x;
+});
+
 app.get('/api/new-arrivals', async (req, res) => {
   let newCoinsList;
   try {
@@ -24,7 +57,8 @@ app.get('/api/new-arrivals', async (req, res) => {
     newCoinsList = Array.isArray(newCoinsList) ? newCoinsList : [];
     const cutoffDate = moment(new Date(req.query.cutoff_date || CUTOFF_DATE));
     newCoinsList = newCoinsList.filter((coin) => {
-      return moment(coin.date_added).isSame(cutoffDate) || moment(coin.date_added).isAfter(cutoffDate)
+      return moment(coin.date_added).isSame(cutoffDate) ||
+        moment(coin.date_added).isAfter(cutoffDate)
     });
     res.send(newCoinsList);
   } catch (err) {
