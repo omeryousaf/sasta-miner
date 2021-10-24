@@ -32,7 +32,7 @@ module.exports = class CoinGeckoScraper {
                 else {
                     if (process.env.NODE_ENV === 'dev') {
                         this.incomingCoins.push({
-                            id: 'dummy',
+                            id: 'CG-dummy',
                             symbol: 'hellooo',
                             name: 'Dummy Gecko',
                             link: 'https://www.coingecko.com/en/coins/01coin',
@@ -92,7 +92,9 @@ module.exports = class CoinGeckoScraper {
                     `\n\tname: ${name},` +
                     `\n\ttoken_addresses: ${platforms},` +
                     `\n\tlink: https://www.coingecko.com/en/coins/${id}` +
-                    `\nfound at ${discoveredAt}.`;
+                    `\nfound at ${discoveredAt}.` +
+                    `\nAlerts sponsored by upcoming Goat It Gaming platform on Solana. ` +
+                      `https://goatit.app | https://discord.gg/goatitsol`;
                 notifyOnTelegram(message, TELEGRAM_WEBHOOK_URLS[this.telegramWebhookKey]);
                 notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
                 console.log(message);

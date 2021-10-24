@@ -53,7 +53,7 @@ module.exports = class CoinScraper {
 
       if (process.env.NODE_ENV === 'dev') {
         this.mostRecentItems.push({
-          id: 'dummy',
+          id: 'CMC-dummy',
           symbol: 'hellooo',
           quote: {
             USD: {
@@ -70,7 +70,14 @@ module.exports = class CoinScraper {
         if (!this.previousItemsMap[`${coin.id}`] && dictionarySize) {
           discoveredAt = new moment().toString();
           tokenAddress = coin.platform ? coin.platform.token_address : coin.platform;
-          message = `New @ CoinMarketCap:\n\tid: ${coin.id},\n\tsymbol: ${coin.symbol},\n\tmarket_cap: ${coin.quote.USD.market_cap},\n\ttoken_address: ${tokenAddress},\nfound at ${discoveredAt}`;
+          message = `New @ CoinMarketCap:` + 
+            `\n\tid: ${coin.id},` +
+            `\n\tsymbol: ${coin.symbol},` +
+            `\n\tmarket_cap: ${coin.quote.USD.market_cap},` +
+            `\n\ttoken_address: ${tokenAddress},` +
+            `\nfound at ${discoveredAt}.` +
+            `\nAlerts sponsored by upcoming Goat It Gaming platform on Solana. ` +
+              `https://goatit.app | https://discord.gg/goatitsol`;
           notifyOnTelegram(message, TELEGRAM_WEBHOOK_URLS[this.telegramWebhookKey]);
           notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
           console.log(message);
