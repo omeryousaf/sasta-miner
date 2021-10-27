@@ -47,6 +47,7 @@ module.exports = class CoinGeckoScraper {
                 this.interval = 5000;
                 setTimeout(callApi, this.interval);
             } catch (error) {
+                console.log(`===== catch block of CG polling service ======`);
                 if (error.response === undefined) {
                     logError('Response is undefined');
                     setTimeout(() => {
