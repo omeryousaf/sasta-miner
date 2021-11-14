@@ -1,16 +1,17 @@
 const moment = require('moment');
 const axios = require('axios')
-const { TELEGRAM_WEBHOOK_URLS, CMC_API_KEY, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnTelegram, notifyOnDiscord, logError, updateJsonFile } = require('./common-functions');
+const { TELEGRAM_WEBHOOK_URLS, CMC_API_KEY } = require('./config');
+const { notifyDiscordBots, notifyOnTelegram, logError, updateJsonFile } = require(
+  './common-functions');
 
 module.exports = class CoinScraper {
   constructor() {
     this.mostRecentItems = [];
     this.previousItemsMap = {};
     this.telegramWebhookKey = 'TelegramBot';
-    this.discordWebhookKey = 'CMCBajwaBot';
+    this.discordWebhookKeys = ['CMCBajwaBot', 'yetToBeNamedBot'];
     if(process.env.NODE_ENV === 'dev') {
-      this.discordWebhookKey = 'testWeirdoBot';
+      this.discordWebhookKeys = ['testWeirdoBot'];
     }
   }
 
@@ -31,7 +32,8 @@ module.exports = class CoinScraper {
         }
       };
       const response = await axios(config)
-      // The response coming from api can be accessed through response.data.data that is why we are returning response.data from here
+      // The response coming from api can be accessed through response.data.data that is why
+      // we are returning response.data from here
       return response.data;
     } catch (error) {
       throw new Error(error);
@@ -79,7 +81,7 @@ module.exports = class CoinScraper {
             `\nAlerts sponsored by upcoming Goat It Gaming platform on Solana. ` +
               `https://goatit.app | https://discord.gg/goatitsol`;
           notifyOnTelegram(message, TELEGRAM_WEBHOOK_URLS[this.telegramWebhookKey]);
-          notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
+          notifyDiscordBots(message, this.discordWebhookKeys);
           console.log(message);
         }
       });

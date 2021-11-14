@@ -1,8 +1,15 @@
 const moment = require('moment');
 const axios = require('axios');
 const fs = require('fs')
+const { DISCORD_WEBHOOK_URLS } = require('./config');
 
+const notifyDiscordBots = (msg, botWebhookKeys) => {
+  botWebhookKeys.map(botName => {
+    notifyOnDiscord(msg, DISCORD_WEBHOOK_URLS[botName]);
+  });
+};
 
+/** @todo: remove async from method declaration after removing await from its refs **/
 const notifyOnDiscord = async (msg, discordWebhookUrl) => {
   try {
     const config = {
@@ -57,6 +64,7 @@ const updateJsonFile = (coin) => {
 }
 
 module.exports = {
+  notifyDiscordBots,
   notifyOnTelegram,
   notifyOnDiscord,
   logError,
