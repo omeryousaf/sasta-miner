@@ -103,9 +103,7 @@ module.exports = class CoinGeckoScraper {
                     `\n\tname: ${name},` +
                     `\n\ttoken_addresses: ${platforms},` +
                     `\n\tlink: https://www.coingecko.com/en/coins/${id}` +
-                    `\nfound at ${discoveredAt}.` +
-                    `\nAlerts sponsored by upcoming Goat It Gaming platform on Solana. ` +
-                      `https://goatit.app | https://discord.gg/goatitsol`;
+                    `\nfound at ${discoveredAt}.`;
                 notifyOnTelegram(message, TELEGRAM_WEBHOOK_URLS[this.telegramWebhookKey]);
                 notifyDiscordBots(message, this.discordWebhookKeys);
                 console.log(message);
