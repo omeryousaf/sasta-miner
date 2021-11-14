@@ -1,7 +1,8 @@
 const moment = require('moment');
 const axios = require('axios');
 const { TELEGRAM_WEBHOOK_URLS, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnTelegram, notifyOnDiscord, logError, updateJsonFile } = require('./common-functions');
+const { notifyOnTelegram, notifyOnDiscord, logError, updateJsonFile } = require(
+    './common-functions');
 
 module.exports = class CoinGeckoScraper {
     constructor() {
@@ -19,10 +20,18 @@ module.exports = class CoinGeckoScraper {
         const callApi = async (fromCatchBlock) => {
             try {
                 if(fromCatchBlock) {
-                    console.log('CG polling method `callApi()` called after an error');
+                    console.error('CG polling method `callApi()` called after an error');
                 }
                 // Get all coins
-                let response = await axios.get('https://api.coingecko.com/api/v3/coins/list?include_platform=true');
+                const config = {
+                    url: 'https://api.coingecko.com/api/v3/coins/list',
+                    method: 'get',
+                    params: {
+                        include_platform: true,
+                    },
+                    timeout: 20000 // 20 seconds
+                };
+                let response = await axios(config);
                 updateJsonFile('gecko');
                 this.incomingCoins = response.data || [];
                 const dictionarySize = Object.keys(this.storedCoinList).length;
@@ -47,9 +56,10 @@ module.exports = class CoinGeckoScraper {
                 this.interval = 5000;
                 setTimeout(callApi, this.interval);
             } catch (error) {
-                console.log(`===== catch block of CG polling service ======`);
+                console.error(`===== catch block of CG polling service ======`);
                 if (error.response === undefined) {
-                    logError('Response is undefined');
+                    console.error('error.response is undefined');
+                    logError(error);
                     setTimeout(() => {
                         callApi(true);
                     }, this.interval);
@@ -57,7 +67,7 @@ module.exports = class CoinGeckoScraper {
                 else if (error.response.status === 429) {
                     const retryAfter = error.response.headers['retry-after'];
                     this.interval = retryAfter * 1000 + 2000
-                    console.log(`Response Status = ${error.response.status} Interval = ${this.interval}`)
+                    console.error(`Response Status = ${error.response.status} Interval = ${this.interval}`)
                     setTimeout(() => {
                         callApi(true);
                     }, this.interval);

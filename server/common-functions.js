@@ -16,7 +16,7 @@ const notifyOnDiscord = async (msg, discordWebhookUrl) => {
     await axios(config)
     console.log('sent notification to discord');
   } catch (error) {
-    console.log(error);
+    logError(error);
   }
 };
 
@@ -31,14 +31,14 @@ const notifyOnTelegram = async (msg, webhookUrl) => {
     await axios(config);
     console.log('sent notification to telegram bot');
   } catch (error) {
-    console.log(error);
+    logError(error);
   }
 };
 
 const logError = (error) => {
   let errorTiming = moment().toString();
-  console.log(error);
-  console.log(`at ${errorTiming}`);
+  console.error(error, `at ${errorTiming}`);
+  console.error(`stacktrace: `, error.stack);
 }
 
 const updateJsonFile = (coin) => {
