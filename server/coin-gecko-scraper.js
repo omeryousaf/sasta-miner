@@ -1,7 +1,7 @@
 const moment = require('moment');
 const axios = require('axios');
-const { TELEGRAM_WEBHOOK_URLS, DISCORD_WEBHOOK_URLS } = require('./config');
-const { notifyOnTelegram, notifyOnDiscord, logError, updateJsonFile } = require(
+const { TELEGRAM_WEBHOOK_URLS } = require('./config');
+const { notifyDiscordBots, notifyOnTelegram, logError, updateJsonFile } = require(
     './common-functions');
 
 module.exports = class CoinGeckoScraper {
@@ -10,9 +10,9 @@ module.exports = class CoinGeckoScraper {
         this.storedCoinList = {};
         this.interval = 5000;
         this.telegramWebhookKey = 'TelegramBot';
-        this.discordWebhookKey = 'CGBajwaBot';
+        this.discordWebhookKeys = ['CGBajwaBot', 'yetToBeNamedBot'];
         if (process.env.NODE_ENV === 'dev') {
-            this.discordWebhookKey = 'testWeirdoBot';
+            this.discordWebhookKeys = ['testWeirdoBot'];
         }
     }
 
@@ -103,11 +103,9 @@ module.exports = class CoinGeckoScraper {
                     `\n\tname: ${name},` +
                     `\n\ttoken_addresses: ${platforms},` +
                     `\n\tlink: https://www.coingecko.com/en/coins/${id}` +
-                    `\nfound at ${discoveredAt}.` +
-                    `\nAlerts sponsored by upcoming Goat It Gaming platform on Solana. ` +
-                      `https://goatit.app | https://discord.gg/goatitsol`;
+                    `\nfound at ${discoveredAt}.`;
                 notifyOnTelegram(message, TELEGRAM_WEBHOOK_URLS[this.telegramWebhookKey]);
-                notifyOnDiscord(message, DISCORD_WEBHOOK_URLS[this.discordWebhookKey]);
+                notifyDiscordBots(message, this.discordWebhookKeys);
                 console.log(message);
                 this.storedCoinList[`${coin.id}`] = coin;
             }
