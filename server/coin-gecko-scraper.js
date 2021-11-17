@@ -32,6 +32,9 @@ module.exports = class CoinGeckoScraper {
                     timeout: 20000 // 20 seconds
                 };
                 let response = await axios(config);
+                if(fromCatchBlock) {
+                    console.error('Polled successfully after error');
+                }
                 updateJsonFile('gecko');
                 this.incomingCoins = response.data || [];
                 const dictionarySize = Object.keys(this.storedCoinList).length;
