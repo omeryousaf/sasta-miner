@@ -57,6 +57,7 @@ module.exports = class CoinGeckoScraper {
                     this.checkNewCoin()
                 }
                 this.interval = 5000;
+                console.log(`calling setTimeout from try block of callApi() method`);
                 setTimeout(callApi, this.interval);
             } catch (error) {
                 console.error(`===== catch block of CG polling service ======`);
