@@ -3,12 +3,13 @@ const axios = require('axios');
 const { TELEGRAM_WEBHOOK_URLS } = require('./config');
 const { notifyDiscordBots, notifyOnTelegram, logError, updateJsonFile } = require(
     './common-functions');
+const { COIN_GECKO_INTERVAL } = require('./constants');
 
 module.exports = class CoinGeckoScraper {
     constructor() {
         this.incomingCoins = [];
         this.storedCoinList = {};
-        this.interval = 5000;
+        this.interval = COIN_GECKO_INTERVAL;
         this.telegramWebhookKey = 'TelegramBot';
         this.discordWebhookKeys = ['CGBajwaBot', 'yetToBeNamedBot'];
         if (process.env.NODE_ENV === 'dev') {
@@ -56,8 +57,8 @@ module.exports = class CoinGeckoScraper {
                     }
                     this.checkNewCoin()
                 }
-                this.interval = 5000;
-                console.log(`calling setTimeout from try block of callApi() method`);
+                this.interval = COIN_GECKO_INTERVAL;
+                console.error(`calling setTimeout from try block of callApi() method`);
                 setTimeout(callApi, this.interval);
             } catch (error) {
                 console.error(`===== catch block of CG polling service ======`);

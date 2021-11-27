@@ -1,5 +1,7 @@
 const CUTOFF_DATE = '2021/04/25';
+const COIN_GECKO_INTERVAL = 12000;
 
 module.exports = {
-  CUTOFF_DATE
+  CUTOFF_DATE,
+  COIN_GECKO_INTERVAL
 };
