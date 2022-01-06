@@ -30,7 +30,6 @@ module.exports = class CoinGeckoScraper {
         try {
             let response = await axios(this.coinsListApiConfig);
             updateJsonFile('gecko');
-            console.log(response.data[response.data.length - 1]);
             this.incomingCoins = response.data || [];
             const dictionarySize = Object.keys(this.storedCoinList).length;
             if (dictionarySize === 0) {
