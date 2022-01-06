@@ -7,6 +7,15 @@ const { COIN_GECKO_INTERVAL } = require('./constants');
 
 module.exports = class CoinGeckoScraper {
     constructor() {
+        this.coinsListApiConfig = {
+            url: 'https://api.coingecko.com/api/v3/coins/list',
+            method: 'get',
+            params: {
+                include_platform: true,
+            },
+            timeout: 20000 // 20 seconds
+        };
+        this.setIntervalRef;
         this.incomingCoins = [];
         this.storedCoinList = {};
         this.interval = COIN_GECKO_INTERVAL;
@@ -17,75 +26,61 @@ module.exports = class CoinGeckoScraper {
         }
     }
 
-    coinManagement() {
-        const callApi = async (fromCatchBlock) => {
-            try {
-                if(fromCatchBlock) {
-                    console.error('CG polling method `callApi()` called after an error');
-                }
-                // Get all coins
-                const config = {
-                    url: 'https://api.coingecko.com/api/v3/coins/list',
-                    method: 'get',
-                    params: {
-                        include_platform: true,
-                    },
-                    timeout: 20000 // 20 seconds
-                };
-                let response = await axios(config);
-                if(fromCatchBlock) {
-                    console.error('Polled successfully after error');
-                }
-                updateJsonFile('gecko');
-                this.incomingCoins = response.data || [];
-                const dictionarySize = Object.keys(this.storedCoinList).length;
-                if (dictionarySize === 0) {
-                    this.storeCoins()
-                }
-                else {
-                    if (process.env.NODE_ENV === 'dev') {
-                        this.incomingCoins.push({
-                            id: 'CG-dummy',
-                            symbol: 'hellooo',
-                            name: 'Dummy Gecko',
-                            link: 'https://www.coingecko.com/en/coins/01coin',
-                            platforms: {
-                                etherium: '1234',
-                                bitcoin: ''
-                            }
-                        })
-                    }
-                    this.checkNewCoin()
-                }
-                this.interval = COIN_GECKO_INTERVAL;
-                console.error(`calling setTimeout from try block of callApi() method`);
-                setTimeout(callApi, this.interval);
-            } catch (error) {
-                console.error(`===== catch block of CG polling service ======`);
-                if (error.response === undefined) {
-                    console.error('error.response is undefined');
-                    logError(error);
-                    setTimeout(() => {
-                        callApi(true);
-                    }, this.interval);
-                }
-                else if (error.response.status === 429) {
-                    const retryAfter = error.response.headers['retry-after'];
-                    this.interval = retryAfter * 1000 + 2000
-                    console.error(`Response Status = ${error.response.status} Interval = ${this.interval}`)
-                    setTimeout(() => {
-                        callApi(true);
-                    }, this.interval);
-                }
-                else {
-                    logError(error);
-                    setTimeout(() => {
-                        callApi(true);
-                    }, this.interval);
-                }
+    async flagNewArrivals(pollingInterval) {
+        try {
+            let response = await axios(this.coinsListApiConfig);
+            updateJsonFile('gecko');
+            console.log(response.data[response.data.length - 1]);
+            this.incomingCoins = response.data || [];
+            const dictionarySize = Object.keys(this.storedCoinList).length;
+            if (dictionarySize === 0) {
+                this.storeCoins()
             }
+            else {
+                if (process.env.NODE_ENV === 'dev') {
+                    this.incomingCoins.push({
+                        id: 'CG-dummy',
+                        symbol: 'hellooo',
+                        name: 'Dummy Gecko',
+                        link: 'https://www.coingecko.com/en/coins/01coin',
+                        platforms: {
+                            etherium: '1234',
+                            bitcoin: ''
+                        }
+                    })
+                }
+                this.checkNewCoin()
+            }
+            console.error(`Successfully polled`);
+            if(pollingInterval > COIN_GECKO_INTERVAL) {
+                this.startPollingWithInterval(COIN_GECKO_INTERVAL);
+            }
+        } catch (error) {
+            console.error(`===== catch block of CG polling service ======`);
+            if (error.response === undefined) {
+                console.error('error.response is undefined');
+            }
+            else if (error.response.status === 429) {
+                let retryAfter = error.response.headers['retry-after'];
+                retryAfter = retryAfter * 1000 + 2000;
+                console.error(`Response Status = ${error.response.status}, ` +
+                    `retry after = ${retryAfter} milliseconds`);
+                this.startPollingWithInterval(retryAfter);
+            }
+            logError(error);
         }
-        setTimeout(callApi, this.interval);
+    }
+
+    startPollingWithInterval(milliseconds) {
+        clearInterval(this.setIntervalRef);
+        console.error(`Switching to ${milliseconds}ms interval for CG polling service`);
+        this.setIntervalRef = setInterval(() => {
+            this.flagNewArrivals(milliseconds);
+        }, milliseconds);
+    }
+
+    async coinManagement() {
+        this.startPollingWithInterval(this.interval);
     }
 
     storeCoins() {
